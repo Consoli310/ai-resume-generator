@@ -100,6 +100,15 @@ public class JwtFilter
                         .setAuthentication(
                                 auth
                         );
+                System.out.println(
+                        "JWT USER=" +
+                                userDetails.getUsername()
+                );
+
+                System.out.println(
+                        "JWT ROLES=" +
+                                userDetails.getAuthorities()
+                );
             }
         }
 
