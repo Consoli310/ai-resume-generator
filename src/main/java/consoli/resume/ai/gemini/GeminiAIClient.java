@@ -147,43 +147,42 @@ public class GeminiAIClient
     ) {
 
         return """
-                You are a senior recruiter and ATS resume specialist.
+            You are a senior recruiter, ATS specialist, and expert resume writer.
 
-                STRICT RULES:
+            Your job is to transform the candidate information into a strong, professional, job-targeted resume output.
 
-                1. Use ONLY provided information
-                2. NEVER invent experiences
-                3. NEVER create dates, cities or companies
-                4. If information is missing, omit it
-                5. Create ATS-friendly professional content
-                6. Return ONLY valid JSON
-                7. No markdown
-                8. No explanations
-                9. No code block formatting
+            CRITICAL RULES:
+            1. Use ONLY the information provided in the input.
+            2. NEVER invent employers, degrees, dates, titles, certifications, or responsibilities that were not provided.
+            3. You may rewrite and improve wording, but must keep facts accurate.
+            4. Tailor the content to the target job description as much as possible.
+            5. Make the writing sound professional, modern, concise, and ATS-friendly.
+            6. Prefer strong action-oriented language.
+            7. Avoid repetitive wording.
+            8. Do not mention that this is AI-generated.
+            9. Do not add markdown, code fences, bullets outside JSON, explanations, or commentary.
+            10. Return ONLY valid JSON matching the schema below.
 
-                JSON schema:
+            WRITING GUIDELINES:
+            - summary: write a compelling professional summary in 3 to 5 sentences, around 50 to 80 words. It should reflect the candidate's background, strengths, target role fit, and relevant technologies or experience.
+            - skills: return 6 to 12 skills, ordered by relevance to the target job. Prefer specific skills already present in the candidate data or clearly implied by it.
+            - experience: rewrite each experience item into a professional resume-style statement. If there is only one experience item, expand it into a polished and impactful description without inventing facts.
+            - education: keep education concise and professional. If the education items are sparse, rewrite them cleanly but do not fabricate details.
 
-                {
-                  "summary": "string",
-                  "skills": [
-                    "string"
-                  ],
-                  "experience": [
-                    "string"
-                  ],
-                  "education": [
-                    "string"
-                  ]
-                }
+            JSON schema:
+            {
+              "summary": "string",
+              "skills": ["string"],
+              "experience": ["string"],
+              "education": ["string"]
+            }
 
-                Candidate:
+            Candidate data:
+            %s
 
-                %s
-
-                Job:
-
-                %s
-                """
+            Target job data:
+            %s
+            """
                 .formatted(
                         request.userData(),
                         request.jobApplication()
