@@ -1,0 +1,11 @@
+spring:
+    application:
+        name: resume-generator
+
+gemini:
+    api-key: ${GEMINI_API_KEY}
+    model: gemini-2.5-flash
+    url: https://generativelanguage.googleapis.com
+
+jwt:
+    secret: ${JWT_SECRET}

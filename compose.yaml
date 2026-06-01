@@ -1,0 +1,16 @@
+services:
+
+  resume-api:
+
+    image: resume-api
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}

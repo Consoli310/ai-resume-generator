@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Resume</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+
+        h1 {
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>Generated Resume</h1>
+
+<h2>Professional Summary</h2>
+<p th:text="${summary}"></p>
+
+<h2>Skills</h2>
+<ul>
+    <li
+            th:each="skill : ${skills}"
+            th:text="${skill}">
+    </li>
+</ul>
+
+<h2>Experience</h2>
+<ul>
+    <li
+            th:each="exp : ${experience}"
+            th:text="${exp}">
+    </li>
+</ul>
+
+<h2>Education</h2>
+<ul>
+    <li
+            th:each="edu : ${education}"
+            th:text="${edu}">
+    </li>
+</ul>
+
+</body>
+</html>
