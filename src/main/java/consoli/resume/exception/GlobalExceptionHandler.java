@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -176,6 +177,36 @@ public class GlobalExceptionHandler {
                         )
 
                 );
+    }
+
+    @ExceptionHandler(
+            HttpStatusCodeException.class
+    )
+    public ResponseEntity<ErrorResponseDTO>
+    handleHttpStatusCode(
+
+            HttpStatusCodeException ex
+
+    ) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        HttpStatus responseStatus = status != null ? status : HttpStatus.INTERNAL_SERVER_ERROR;
+
+        String message = ex.getMessage();
+        if (responseStatus == HttpStatus.TOO_MANY_REQUESTS) {
+            message = "Gemini API rate limit exceeded. Please try again later or upgrade your plan.";
+        }
+
+        ErrorResponseDTO error =
+                new ErrorResponseDTO(
+                        LocalDateTime.now(),
+                        responseStatus.value(),
+                        responseStatus.getReasonPhrase(),
+                        message
+                );
+
+        return ResponseEntity
+                .status(responseStatus)
+                .body(error);
     }
 
     @ExceptionHandler(
