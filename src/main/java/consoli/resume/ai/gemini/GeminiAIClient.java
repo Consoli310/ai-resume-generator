@@ -80,8 +80,12 @@ public class GeminiAIClient
             response = postToGemini(model, body);
         } catch (HttpStatusCodeException e) {
             if (e.getStatusCode().value() == 429) {
-                log.warn("Gemini model {} rate limited. Retrying with fallback model {}", model, fallbackModel);
-                response = postToGemini(fallbackModel, body);
+                String fallback = fallbackModel;
+                if ("gemini-1.5-flash".equals(fallback)) {
+                    fallback = "gemini-1.5-flash-latest";
+                }
+                log.warn("Gemini model {} rate limited. Retrying with fallback model {}", model, fallback);
+                response = postToGemini(fallback, body);
             } else {
                 throw e;
             }
@@ -421,8 +425,12 @@ public class GeminiAIClient
             response = postToGemini(model, body);
         } catch (HttpStatusCodeException e) {
             if (e.getStatusCode().value() == 429) {
-                log.warn("Gemini model {} rate limited for parser. Retrying with fallback model {}", model, fallbackModel);
-                response = postToGemini(fallbackModel, body);
+                String fallback = fallbackModel;
+                if ("gemini-1.5-flash".equals(fallback)) {
+                    fallback = "gemini-1.5-flash-latest";
+                }
+                log.warn("Gemini model {} rate limited for parser. Retrying with fallback model {}", model, fallback);
+                response = postToGemini(fallback, body);
             } else {
                 throw e;
             }
