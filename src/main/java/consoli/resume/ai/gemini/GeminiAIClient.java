@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 
@@ -31,6 +32,9 @@ public class GeminiAIClient
 
     @Value("${gemini.model}")
     private String model;
+
+    @Value("${gemini.fallback-model:gemini-1.5-flash}")
+    private String fallbackModel;
 
     @Value("${gemini.url}")
     private String url;
@@ -71,26 +75,17 @@ public class GeminiAIClient
                         )
                 );
 
-        GeminiResponseDTO response =
-                restClient.post()
-                        .uri(
-                                "%s/v1beta/models/%s:generateContent"
-                                        .formatted(
-                                                url,
-                                                model
-                                        )
-                        )
-                        .header(
-                                "x-goog-api-key",
-                                apiKey
-                        )
-                        .body(
-                                body
-                        )
-                        .retrieve()
-                        .body(
-                                GeminiResponseDTO.class
-                        );
+        GeminiResponseDTO response;
+        try {
+            response = postToGemini(model, body);
+        } catch (HttpStatusCodeException e) {
+            if (e.getStatusCode().value() == 429) {
+                log.warn("Gemini model {} rate limited. Retrying with fallback model {}", model, fallbackModel);
+                response = postToGemini(fallbackModel, body);
+            } else {
+                throw e;
+            }
+        }
 
         if (
 
@@ -421,26 +416,17 @@ public class GeminiAIClient
                         )
                 );
 
-        GeminiResponseDTO response =
-                restClient.post()
-                        .uri(
-                                "%s/v1beta/models/%s:generateContent"
-                                        .formatted(
-                                                url,
-                                                model
-                                        )
-                        )
-                        .header(
-                                "x-goog-api-key",
-                                apiKey
-                        )
-                        .body(
-                                body
-                        )
-                        .retrieve()
-                        .body(
-                                GeminiResponseDTO.class
-                        );
+        GeminiResponseDTO response;
+        try {
+            response = postToGemini(model, body);
+        } catch (HttpStatusCodeException e) {
+            if (e.getStatusCode().value() == 429) {
+                log.warn("Gemini model {} rate limited for parser. Retrying with fallback model {}", model, fallbackModel);
+                response = postToGemini(fallbackModel, body);
+            } else {
+                throw e;
+            }
+        }
 
         if (
 
@@ -495,6 +481,28 @@ public class GeminiAIClient
                     e
             );
         }
+    }
+
+    private GeminiResponseDTO postToGemini(String modelToUse, GeminiRequestDTO body) {
+        return restClient.post()
+                .uri(
+                        "%s/v1beta/models/%s:generateContent"
+                                .formatted(
+                                        url,
+                                        modelToUse
+                                )
+                )
+                .header(
+                        "x-goog-api-key",
+                        apiKey
+                )
+                .body(
+                        body
+                )
+                .retrieve()
+                .body(
+                        GeminiResponseDTO.class
+                );
     }
 
     private String cleanJsonResponse(String rawJson) {
