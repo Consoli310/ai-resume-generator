@@ -114,11 +114,7 @@ public class GeminiAIClient
                         .get(0)
                         .text();
 
-        rawJson =
-                rawJson
-                        .replace("```json", "")
-                        .replace("```", "")
-                        .trim();
+        rawJson = cleanJsonResponse(rawJson);
 
         log.info(
                 "Gemini raw response={}",
@@ -470,11 +466,7 @@ public class GeminiAIClient
                         .get(0)
                         .text();
 
-        rawJson =
-                rawJson
-                        .replace("```json", "")
-                        .replace("```", "")
-                        .trim();
+        rawJson = cleanJsonResponse(rawJson);
 
         log.info(
                 "Candidate parser raw response={}",
@@ -503,5 +495,21 @@ public class GeminiAIClient
                     e
             );
         }
+    }
+
+    private String cleanJsonResponse(String rawJson) {
+        if (rawJson == null) {
+            return "";
+        }
+        int firstBrace = rawJson.indexOf('{');
+        int lastBrace = rawJson.lastIndexOf('}');
+        if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+            return rawJson.substring(firstBrace, lastBrace + 1);
+        }
+        return rawJson
+                .replace("```json", "")
+                .replace("```JSON", "")
+                .replace("```", "")
+                .trim();
     }
 }
