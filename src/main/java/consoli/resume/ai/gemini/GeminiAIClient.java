@@ -33,7 +33,7 @@ public class GeminiAIClient
     @Value("${gemini.model}")
     private String model;
 
-    @Value("${gemini.fallback-model:gemini-1.5-flash}")
+    @Value("${gemini.fallback-model:gemini-1.5-flash-latest}")
     private String fallbackModel;
 
     @Value("${gemini.url}")
