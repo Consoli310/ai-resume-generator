@@ -16,31 +16,6 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(
-            ResourceNotFoundException.class
-    )
-    public ResponseEntity<ErrorResponseDTO>
-    handleNotFound(
-
-            ResourceNotFoundException ex
-
-    ) {
-
-        ErrorResponseDTO error =
-                new ErrorResponseDTO(
-                        LocalDateTime.now(),
-                        HttpStatus.NOT_FOUND.value(),
-                        HttpStatus.NOT_FOUND.getReasonPhrase(),
-                        ex.getMessage()
-                );
-
-        return ResponseEntity
-                .status(
-                        HttpStatus.NOT_FOUND
-                )
-                .body(error);
-    }
-
-    @ExceptionHandler(
             AIIntegrationException.class
     )
     public ResponseEntity<ErrorResponseDTO>

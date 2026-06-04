@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Resume</title>
 
     <style>
@@ -10,21 +11,63 @@
             font-family: Arial, sans-serif;
             margin: 40px;
             color: #333;
+            line-height: 1.5;
         }
 
-        h1 {
-            color: #1f2937;
-            margin-bottom: 5px;
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .name {
+            font-size: 30px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .title {
+            font-size: 18px;
+            color: #4b5563;
+            margin-top: 5px;
+        }
+
+        .contact {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .links {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #555;
         }
 
         h2 {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 2px solid #e5e7eb;
             padding-bottom: 5px;
             margin-top: 30px;
+            margin-bottom: 10px;
+            color: #111827;
         }
 
         ul {
             padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .skills-line {
+            line-height: 1.9;
+            color: #374151;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .project-list li {
+            margin-bottom: 10px;
         }
 
     </style>
@@ -33,34 +76,106 @@
 
 <body>
 
-<h1>Generated Resume</h1>
+<div class="header">
+
+    <div class="name"
+         th:text="${name}">
+        Name
+    </div>
+
+    <div class="title"
+         th:text="${targetTitle}">
+        Target Title
+    </div>
+
+    <div class="contact">
+
+    <span
+            th:if="${email != null}"
+            th:text="${email}">
+    </span>
+
+        <span th:if="${phone != null}">
+        | <span th:text="${phone}"></span>
+    </span>
+
+        <span th:if="${city != null}">
+        | <span th:text="${city}"></span>
+    </span>
+
+    </div>
+
+    <div class="links">
+
+    <span th:if="${linkedin != null}">
+        LinkedIn:
+        <span th:text="${linkedin}"></span>
+    </span>
+
+        <br th:if="${github != null}"/>
+
+        <span th:if="${github != null}">
+        GitHub:
+        <span th:text="${github}"></span>
+    </span>
+
+    </div>
+
+</div>
 
 <h2>Professional Summary</h2>
-<p th:text="${summary}"></p>
+
+<p th:text="${summary}">
+    Summary
+</p>
 
 <h2>Skills</h2>
-<ul>
-    <li
-            th:each="skill : ${skills}"
-            th:text="${skill}">
-    </li>
-</ul>
+
+<div class="skills-line">
+
+    <span
+            th:each="skill, stat : ${skills}"
+            th:text="${skill + (stat.last ? '' : ' • ')}">
+</span>
+
+</div>
 
 <h2>Experience</h2>
+
 <ul>
+
     <li
             th:each="exp : ${experience}"
             th:text="${exp}">
     </li>
+
 </ul>
 
 <h2>Education</h2>
+
 <ul>
+
     <li
             th:each="edu : ${education}"
             th:text="${edu}">
     </li>
+
 </ul>
+
+<div th:if="${projects != null and !projects.isEmpty()}">
+
+    <h2>Projects</h2>
+
+    <ul class="project-list">
+
+        <li
+                th:each="project : ${projects}"
+                th:text="${project}">
+        </li>
+
+    </ul>
+
+</div>
 
 </body>
 </html>

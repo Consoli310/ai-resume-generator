@@ -3,7 +3,6 @@ package consoli.resume.ai.gemini;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import consoli.resume.ai.AIClient;
 import consoli.resume.ai.dto.*;
-import consoli.resume.dto.request.ResumeGenerateRequestDTO;
 import consoli.resume.exception.AIIntegrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,10 @@ public class GeminiAIClient
     @Value("${gemini.model}")
     private String model;
 
-    @Value("${gemini.fallback-model:gemini-1.5-flash-latest}")
+    @Value("${gemini.fallback-model:gemini-2.5-flash-lite}")
     private String fallbackModel;
+
+    private static final String API_VERSION = "v1beta";
 
     @Value("${gemini.url}")
     private String url;
@@ -48,13 +49,15 @@ public class GeminiAIClient
     }
 
     @Override
-    public GeneratedResumeDTO generateResume(
-            ResumeGenerateRequestDTO request
+    public GeneratedResumeDTO generateTailoredResume(
+            CandidateProfileDTO profile,
+            String jobDescription
     ) {
 
         String prompt =
-                buildPrompt(
-                        request
+                buildTailoredResumePrompt(
+                        profile,
+                        jobDescription
                 );
 
         log.info(
@@ -75,21 +78,11 @@ public class GeminiAIClient
                         )
                 );
 
-        GeminiResponseDTO response;
-        try {
-            response = postToGemini(model, body);
-        } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().value() == 429) {
-                String fallback = fallbackModel;
-                if ("gemini-1.5-flash".equals(fallback)) {
-                    fallback = "gemini-1.5-flash-latest";
-                }
-                log.warn("Gemini model {} rate limited. Retrying with fallback model {}", model, fallback);
-                response = postToGemini(fallback, body);
-            } else {
-                throw e;
-            }
-        }
+        GeminiResponseDTO response =
+                callGeminiWithFallback(
+                        body,
+                        "resume generation"
+                );
 
         if (
 
@@ -148,8 +141,9 @@ public class GeminiAIClient
         }
     }
 
-    private String buildPrompt(
-            ResumeGenerateRequestDTO request
+    private String buildTailoredResumePrompt(
+            CandidateProfileDTO profile,
+            String jobDescription
     ) {
 
         return """
@@ -273,8 +267,8 @@ public class GeminiAIClient
                 
             """
                 .formatted(
-                        request.userData(),
-                        request.jobApplication()
+                        profile,
+                        jobDescription
                 );
     }
 
@@ -343,33 +337,13 @@ public class GeminiAIClient
             - previous jobs
 
             projects:
-            Extract ALL software, backend, academic, freelance or portfolio projects.
-            
-            A project may appear under sections such as:
-            - Projects
-            - Relevant Project
-            - Portfolio
-            - Personal Projects
-            - Academic Projects
-            
-            Include:
-            - project name
-            - technologies used
-            - short project description
-            
-            A project can be identified by words such as:
-            project,
-            api,
-            system,
-            application,
-            built,
-            created,
-            developed,
-            implemented,
-            deploy,
-            backend.
-            
-            Never leave projects empty if any software project exists in the resume.
+            - Extract ALL software, backend, academic, freelance or portfolio projects.
+            - MUST be an array of plain strings only.
+            - NEVER use JSON objects inside projects.
+            - Each string must combine: project name, technologies and short description.
+            - Example entry:
+              "Event Manager API (Java, Spring Boot, PostgreSQL) — REST API for event management with authentication and tests."
+            - Never leave projects empty if any software project exists in the resume.
 
             JSON schema:
 
@@ -384,7 +358,7 @@ public class GeminiAIClient
               "skills":["string"],
               "education":["string"],
               "experience":["string"],
-              "projects":["string"]
+              "projects":["string only, no nested objects"]
             }
 
             Resume text:
@@ -420,21 +394,11 @@ public class GeminiAIClient
                         )
                 );
 
-        GeminiResponseDTO response;
-        try {
-            response = postToGemini(model, body);
-        } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().value() == 429) {
-                String fallback = fallbackModel;
-                if ("gemini-1.5-flash".equals(fallback)) {
-                    fallback = "gemini-1.5-flash-latest";
-                }
-                log.warn("Gemini model {} rate limited for parser. Retrying with fallback model {}", model, fallback);
-                response = postToGemini(fallback, body);
-            } else {
-                throw e;
-            }
-        }
+        GeminiResponseDTO response =
+                callGeminiWithFallback(
+                        body,
+                        "resume parser"
+                );
 
         if (
 
@@ -491,12 +455,80 @@ public class GeminiAIClient
         }
     }
 
-    private GeminiResponseDTO postToGemini(String modelToUse, GeminiRequestDTO body) {
+    private GeminiResponseDTO callGeminiWithFallback(
+            GeminiRequestDTO body,
+            String operation
+    ) {
+
+        try {
+            return postToGemini(
+                    model,
+                    body
+            );
+        } catch (HttpStatusCodeException e) {
+            if (
+                    e.getStatusCode().value() == 429
+                            && !model.equals(
+                            fallbackModel
+                    )
+            ) {
+                log.warn(
+                        "Gemini model {} rate limited during {}. Retrying with fallback model {}",
+                        model,
+                        operation,
+                        fallbackModel
+                );
+                try {
+                    return postToGemini(
+                            fallbackModel,
+                            body
+                    );
+                } catch (HttpStatusCodeException fallbackError) {
+                    throw toGeminiIntegrationException(
+                            fallbackError
+                    );
+                }
+            }
+            throw toGeminiIntegrationException(
+                    e
+            );
+        }
+    }
+
+    private AIIntegrationException toGeminiIntegrationException(
+            HttpStatusCodeException e
+    ) {
+
+        int status = e.getStatusCode().value();
+        String detail = e.getResponseBodyAsString();
+
+        if (status == 429) {
+            return new AIIntegrationException(
+                    "Gemini API rate limit exceeded on primary and fallback models. Wait a moment and try again.",
+                    e
+            );
+        }
+
+        return new AIIntegrationException(
+                "Gemini API error (%d): %s".formatted(
+                        status,
+                        detail
+                ),
+                e
+        );
+    }
+
+    private GeminiResponseDTO postToGemini(
+            String modelToUse,
+            GeminiRequestDTO body
+    ) {
+
         return restClient.post()
                 .uri(
-                        "%s/v1beta/models/%s:generateContent"
+                        "%s/%s/models/%s:generateContent"
                                 .formatted(
                                         url,
+                                        API_VERSION,
                                         modelToUse
                                 )
                 )

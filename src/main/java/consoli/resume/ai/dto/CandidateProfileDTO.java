@@ -5,7 +5,7 @@ import consoli.resume.ai.jackson.FlexibleStringListDeserializer;
 
 import java.util.List;
 
-public record GeneratedResumeDTO(
+public record CandidateProfileDTO(
 
         String name,
         String email,
@@ -13,11 +13,10 @@ public record GeneratedResumeDTO(
         String city,
         String linkedin,
         String github,
-        String targetTitle,
         String summary,
         List<String> skills,
-        List<String> experience,
         List<String> education,
+        List<String> experience,
         @JsonDeserialize(using = FlexibleStringListDeserializer.class)
         List<String> projects
 

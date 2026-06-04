@@ -25,23 +25,87 @@ public class ResumeHtmlServiceImpl
         Context context = new Context();
 
         context.setVariable(
+                "name",
+                ResumeTextSanitizer.sanitize(
+                        resume.name()
+                )
+        );
+
+        context.setVariable(
+                "email",
+                ResumeTextSanitizer.sanitize(
+                        resume.email()
+                )
+        );
+
+        context.setVariable(
+                "phone",
+                ResumeTextSanitizer.sanitize(
+                        resume.phone()
+                )
+        );
+
+        context.setVariable(
+                "city",
+                ResumeTextSanitizer.sanitize(
+                        resume.city()
+                )
+        );
+
+        context.setVariable(
+                "linkedin",
+                ResumeTextSanitizer.sanitize(
+                        resume.linkedin()
+                )
+        );
+
+        context.setVariable(
+                "github",
+                ResumeTextSanitizer.sanitize(
+                        resume.github()
+                )
+        );
+
+        context.setVariable(
+                "targetTitle",
+                ResumeTextSanitizer.sanitize(
+                        resume.targetTitle()
+                )
+        );
+
+        context.setVariable(
                 "summary",
-                resume.summary()
+                ResumeTextSanitizer.sanitize(
+                        resume.summary()
+                )
         );
 
         context.setVariable(
                 "skills",
-                resume.skills()
+                ResumeTextSanitizer.sanitizeList(
+                        resume.skills()
+                )
         );
 
         context.setVariable(
                 "experience",
-                resume.experience()
+                ResumeTextSanitizer.sanitizeList(
+                        resume.experience()
+                )
         );
 
         context.setVariable(
                 "education",
-                resume.education()
+                ResumeTextSanitizer.sanitizeList(
+                        resume.education()
+                )
+        );
+
+        context.setVariable(
+                "projects",
+                ResumeTextSanitizer.sanitizeList(
+                        resume.projects()
+                )
         );
 
         return templateEngine.process(
