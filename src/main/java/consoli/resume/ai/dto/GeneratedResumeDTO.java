@@ -19,7 +19,9 @@ public record GeneratedResumeDTO(
         List<String> experience,
         List<String> education,
         @JsonDeserialize(using = FlexibleStringListDeserializer.class)
-        List<String> projects
+        List<String> projects,
+        @JsonDeserialize(using = FlexibleStringListDeserializer.class)
+        List<String> languages
 
 ) {
 }

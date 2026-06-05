@@ -232,6 +232,11 @@ public class GeminiAIClient
                   * highlight technologies, architecture and technical impact
                   * emphasize relevance to the target job
                 
+                  languages:
+                
+                  * always include when available
+                  * preserve factual accuracy
+                
                   TARGETING GOAL:
                 
                   The final resume should:
@@ -256,7 +261,8 @@ public class GeminiAIClient
                   "skills":["string"],
                   "experience":["string"],
                   "education":["string"],
-                  "projects":["string"]
+                  "projects":["string"],
+                  "languages":["string"]
                   }
                 
                   Candidate structured profile:
@@ -345,6 +351,9 @@ public class GeminiAIClient
               "Event Manager API (Java, Spring Boot, PostgreSQL) — REST API for event management with authentication and tests."
             - Never leave projects empty if any software project exists in the resume.
 
+            languages:
+            - Extract spoken languages and proficiencies (e.g., "English - Fluent", "Portuguese - Native").
+
             JSON schema:
 
             {
@@ -358,7 +367,8 @@ public class GeminiAIClient
               "skills":["string"],
               "education":["string"],
               "experience":["string"],
-              "projects":["string only, no nested objects"]
+              "projects":["string only, no nested objects"],
+              "languages":["string"]
             }
 
             Resume text:

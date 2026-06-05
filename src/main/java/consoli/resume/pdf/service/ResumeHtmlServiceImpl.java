@@ -108,6 +108,13 @@ public class ResumeHtmlServiceImpl
                 )
         );
 
+        context.setVariable(
+                "languages",
+                ResumeTextSanitizer.sanitizeList(
+                        resume.languages()
+                )
+        );
+
         return templateEngine.process(
                 "resume-template",
                 context

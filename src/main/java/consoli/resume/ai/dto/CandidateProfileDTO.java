@@ -18,7 +18,9 @@ public record CandidateProfileDTO(
         List<String> education,
         List<String> experience,
         @JsonDeserialize(using = FlexibleStringListDeserializer.class)
-        List<String> projects
+        List<String> projects,
+        @JsonDeserialize(using = FlexibleStringListDeserializer.class)
+        List<String> languages
 
 ) {
 }

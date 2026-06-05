@@ -177,5 +177,20 @@
 
 </div>
 
+<div th:if="${languages != null and !languages.isEmpty()}">
+
+    <h2>Languages</h2>
+
+    <ul>
+
+        <li
+                th:each="lang : ${languages}"
+                th:text="${lang}">
+        </li>
+
+    </ul>
+
+</div>
+
 </body>
 </html>
