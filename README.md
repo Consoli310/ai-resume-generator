@@ -20,7 +20,7 @@ An intelligent backend application built on Spring Boot that parses resumes, tai
 ## Tech Stack
 
 - **Framework**: Spring Boot 3.x (Spring Web, Spring Security, Spring Data JPA)
-- **Database**: H2 (Development & Testing) / Configurable SQL database for production
+- **Database**: Postgresql via Neon
 - **Security**: JSON Web Token (JWT) with `io.jsonwebtoken` and BCrypt encryption
 - **AI Integration**: Google Gemini API via Spring `RestClient`
 - **Template Engine & PDF Generation**: HTML-to-PDF compilation mechanisms
@@ -192,4 +192,9 @@ To deploy on Render:
 
 ## Author
 
-Created as a resume tailoring and optimization platform. Developed under the package base `consoli.resume`.
+**Matheus Consoli**
+
+Java Backend Developer with a strong foundation in Spring Boot, REST APIs, PostgreSQL, Spring Security, Docker, and software engineering best practices. This project was developed as part of my professional portfolio to demonstrate backend development skills, API design, authentication and authorization, AI integration, and PDF generation.
+
+- LinkedIn: https://linkedin.com/in/matheus-consoli
+- Email: matheusconsoli310@gmail.com
