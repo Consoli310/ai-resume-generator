@@ -47,30 +47,30 @@ public class ResumeController {
         );
     }
 
-    @PostMapping(
-            value = "/download",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    @Operation(summary = "Gerar PDF do currículo (Multipart Form-Data)", description = "Envia descrição de vaga e currículo atual como campos de formulário e retorna o PDF gerado pela IA.")
-    @ApiResponse(responseCode = "200", description = "PDF gerado e retornado com sucesso")
-    @ApiResponse(responseCode = "401", description = "Não autorizado / Token JWT inválido ou ausente")
-    public ResponseEntity<byte[]> downloadMultipart(
+//     @PostMapping(
+//             value = "/download",
+//             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+//     )
+//     @Operation(summary = "Gerar PDF do currículo (Multipart Form-Data)", description = "Envia descrição de vaga e currículo atual como campos de formulário e retorna o PDF gerado pela IA.")
+//     @ApiResponse(responseCode = "200", description = "PDF gerado e retornado com sucesso")
+//     @ApiResponse(responseCode = "401", description = "Não autorizado / Token JWT inválido ou ausente")
+//     public ResponseEntity<byte[]> downloadMultipart(
 
-            @RequestPart
-            String jobDescription,
+//             @RequestPart
+//             String jobDescription,
 
-            @RequestPart
-            String currentResumeText
+//             @RequestPart
+//             String currentResumeText
 
-    ) {
+//     ) {
 
-        return downloadPdf(
-                new ResumeSimpleRequestDTO(
-                        jobDescription,
-                        currentResumeText
-                )
-        );
-    }
+//         return downloadPdf(
+//                 new ResumeSimpleRequestDTO(
+//                         jobDescription,
+//                         currentResumeText
+//                 )
+//         );
+//     }
 
     private ResponseEntity<byte[]> downloadPdf(
             ResumeSimpleRequestDTO request
