@@ -1,4 +1,4 @@
-# AI Resume Tailoring Service
+# AI Resume Generator
 
 An intelligent backend application built on Spring Boot that parses resumes, tailors them to specific job descriptions using Google Gemini AI, and generates polished, downloadable PDF resumes.
 
