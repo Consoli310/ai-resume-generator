@@ -17,12 +17,11 @@ public class CorsConfig {
             public void addCorsMappings(
                     CorsRegistry registry
             ) {
-
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                            "http://localhost:5173"
-                        )
-                        .allowedMethods("*");
+                .allowedOrigins(
+        "https://ai-resume-generator-nine-psi.vercel.app"
+                )
+                .allowedMethods("*");
             }
         };
     }

@@ -105,7 +105,7 @@ public CorsConfigurationSource corsConfigurationSource() {
 
     configuration.setAllowedOrigins(
             List.of(
-                    "http://localhost:5173"
+                    "https://ai-resume-generator-nine-psi.vercel.app"
             )
     );
 
